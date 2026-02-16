@@ -13,7 +13,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#06b6d4] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[#7F4CFF] flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <span className="text-lg font-bold">Child Investment Plan</span>
@@ -29,20 +29,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Sürətli Keçidlər</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="/" className="hover:text-white transition-colors">
+                <a href="/" className="hover:text-white">
                   Ana Səhifə
                 </a>
               </li>
               <li>
-                <a href="/plan" className="hover:text-white transition-colors">
+                <a href="/plan" className="hover:text-white">
                   Plan Yarat
                 </a>
               </li>
               <li>
-                <a
-                  href="/dashboard"
-                  className="hover:text-white transition-colors"
-                >
+                <a href="/dashboard" className="hover:text-white">
                   İdarə Paneli
                 </a>
               </li>

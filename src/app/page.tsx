@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   Shield,
   TrendingUp,
@@ -20,23 +19,9 @@ import Footer from "@/components/Footer";
 /**
  * Landing page for Child Investment Plan.
  * Features: Hero section, features grid, how it works, CTA.
- * All text in Azerbaijani.
+ * All text in Azerbaijani. No framer-motion — simple CSS transitions only.
  */
 export default function LandingPage() {
-  /** Animation variants for stagger effect */
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
-
   /** Feature cards data */
   const features = [
     {
@@ -44,21 +29,21 @@ export default function LandingPage() {
       title: "İnvestisiya Portfeli",
       description:
         "ABŞ ETF, Qlobal İndeks və Texnologiya fondlarına aylıq investisiya ilə uşağınızın gələcəyini qurun.",
-      color: "from-[#6366f1] to-[#818cf8]",
+      color: "#7F4CFF",
     },
     {
       icon: Shield,
       title: "Həyat Sığortası",
       description:
         "Valideyn vəfat edərsə plan davam edəcək. Uşağınızın gələcəyi hər şəraitdə təmin olunur.",
-      color: "from-[#06b6d4] to-[#22d3ee]",
+      color: "#3EC6FF",
     },
     {
       icon: Brain,
       title: "AI Dəstəyi",
       description:
         "Süni intellekt ilə təhsil xərcləri proqnozu, investisiya məsləhəti və maliyyə planlaşdırması.",
-      color: "from-[#f59e0b] to-[#fbbf24]",
+      color: "#f59e0b",
     },
   ];
 
@@ -106,77 +91,59 @@ export default function LandingPage() {
       <section className="relative pt-24 pb-20 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#6366f1]/5 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[#06b6d4]/5 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#6366f1]/3 to-[#06b6d4]/3 blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#7F4CFF]/5 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[#3EC6FF]/5 blur-3xl" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={containerVariants}
-            className="text-center max-w-4xl mx-auto"
-          >
+          <div className="text-center max-w-4xl mx-auto">
             {/* Badge */}
-            <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/20 text-sm font-medium text-[#6366f1]">
+            <div className="mb-6">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#7F4CFF]/10 border border-[#7F4CFF]/20 text-sm font-medium text-[#7F4CFF]">
                 <Sparkles className="w-4 h-4" />
                 AI-dəstəkli investisiya platforması
               </span>
-            </motion.div>
+            </div>
 
             {/* Main Title */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight"
-            >
-              <span className="gradient-text">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight">
+              <span className="text-[#7F4CFF]">
                 Uşağının gələcəyini
               </span>
               <br />
               <span className="text-[#0f172a]">bu gündən qur.</span>
-            </motion.h1>
+            </h1>
 
             {/* Subtitle */}
-            <motion.p
-              variants={itemVariants}
-              className="mt-6 text-lg sm:text-xl text-[#64748b] max-w-2xl mx-auto leading-relaxed"
-            >
+            <p className="mt-6 text-lg sm:text-xl text-[#64748b] max-w-2xl mx-auto leading-relaxed">
               İnvestisiya + Həyat Sığortası + AI dəstəyi ilə uşağınızın 18
               yaşına qədər maliyyə gələcəyini təmin edin. Hər ay kiçik
               məbləğlər, böyük nəticələr.
-            </motion.p>
+            </p>
 
             {/* CTA Buttons */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/plan"
-                className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#6366f1] to-[#4f46e5] text-white font-semibold text-lg shadow-xl shadow-[#6366f1]/25 hover:shadow-2xl hover:shadow-[#6366f1]/30 hover:-translate-y-0.5 transition-all pulse-glow"
+                className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#7F4CFF] text-white font-semibold text-lg shadow-lg shadow-[#7F4CFF]/20 hover:bg-[#6A35E0] hover:-translate-y-0.5 transition-all"
               >
                 Plan yarat
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="#features"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-[#e2e8f0] text-[#64748b] font-semibold text-lg hover:border-[#6366f1]/30 hover:text-[#6366f1] transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-[#e2e8f0] text-[#64748b] font-semibold text-lg hover:border-[#7F4CFF]/30 hover:text-[#7F4CFF] transition-all"
               >
                 Daha ətraflı
                 <ChevronRight className="w-5 h-5" />
               </Link>
-            </motion.div>
+            </div>
 
             {/* Quick Stats */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto"
-            >
+            <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold gradient-text">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#7F4CFF]">
                     {stat.value}
                   </div>
                   <div className="text-sm text-[#64748b] mt-1">
@@ -184,53 +151,38 @@ export default function LandingPage() {
                   </div>
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* =================== FEATURES SECTION =================== */}
       <section id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl font-bold text-[#0f172a]"
-            >
-              Niyə <span className="gradient-text">Child Plan</span>?
-            </motion.h2>
-            <motion.p
-              variants={itemVariants}
-              className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto"
-            >
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a]">
+              Niyə <span className="text-[#7F4CFF]">Child Plan</span>?
+            </h2>
+            <p className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto">
               Bir platformada investisiya, sığorta və süni intellekt dəstəyi
               ilə uşağınız üçün ən yaxşı planı qurun.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <motion.div
+              <div
                 key={feature.title}
-                variants={itemVariants}
-                className="group relative p-8 rounded-3xl bg-white border border-[#e2e8f0] hover:border-[#6366f1]/20 hover:shadow-xl hover:shadow-[#6366f1]/5 transition-all"
+                className="group relative p-8 rounded-3xl bg-white border border-[#e2e8f0] hover:border-[#7F4CFF]/20 hover:shadow-lg transition-all"
               >
                 <div
-                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg`}
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                  style={{ backgroundColor: `${feature.color}15` }}
                 >
-                  <feature.icon className="w-7 h-7 text-white" />
+                  <feature.icon
+                    className="w-7 h-7"
+                    style={{ color: feature.color }}
+                  />
                 </div>
                 <h3 className="text-xl font-semibold text-[#0f172a] mb-3">
                   {feature.title}
@@ -238,54 +190,32 @@ export default function LandingPage() {
                 <p className="text-[#64748b] leading-relaxed">
                   {feature.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* =================== HOW IT WORKS SECTION =================== */}
-      <section className="py-20 bg-gradient-to-b from-[#f8fafc] to-white">
+      <section className="py-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl font-bold text-[#0f172a]"
-            >
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a]">
               Necə işləyir?
-            </motion.h2>
-            <motion.p
-              variants={itemVariants}
-              className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto"
-            >
+            </h2>
+            <p className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto">
               4 sadə addımda uşağınızın maliyyə gələcəyini planlaşdırın
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
-              <motion.div
-                key={step.number}
-                variants={itemVariants}
-                className="relative text-center"
-              >
+              <div key={step.number} className="relative text-center">
                 {/* Connector line */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-[#6366f1]/30 to-[#06b6d4]/30" />
+                  <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-[#7F4CFF]/15" />
                 )}
-                <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#06b6d4] text-white font-bold text-xl mb-6 shadow-lg">
+                <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#7F4CFF] text-white font-bold text-xl mb-6">
                   {step.number}
                 </div>
                 <h3 className="text-lg font-semibold text-[#0f172a] mb-2">
@@ -294,27 +224,21 @@ export default function LandingPage() {
                 <p className="text-sm text-[#64748b] leading-relaxed">
                   {step.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* =================== KEY BENEFITS =================== */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left: Benefits list */}
-            <motion.div variants={itemVariants}>
+            <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a] mb-8">
                 Uşağınız üçün{" "}
-                <span className="gradient-text">ən yaxşı investisiya</span>
+                <span className="text-[#7F4CFF]">ən yaxşı investisiya</span>
               </h2>
               <div className="space-y-5">
                 {[
@@ -335,16 +259,16 @@ export default function LandingPage() {
               </div>
               <Link
                 href="/plan"
-                className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-[#6366f1] text-white font-semibold hover:bg-[#4f46e5] transition-colors"
+                className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-[#7F4CFF] text-white font-semibold hover:bg-[#6A35E0] transition-colors"
               >
                 İndi başla
                 <ArrowRight className="w-4 h-4" />
               </Link>
-            </motion.div>
+            </div>
 
             {/* Right: Visual card */}
-            <motion.div variants={itemVariants} className="relative">
-              <div className="relative bg-gradient-to-br from-[#6366f1]/5 to-[#06b6d4]/5 rounded-3xl p-8 border border-[#6366f1]/10">
+            <div className="relative">
+              <div className="relative bg-[#7F4CFF]/5 rounded-3xl p-8 border border-[#7F4CFF]/10">
                 {/* Mock investment card */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg mb-4">
                   <div className="flex items-center justify-between mb-4">
@@ -352,7 +276,7 @@ export default function LandingPage() {
                       <p className="text-sm text-[#64748b]">
                         Proqnozlaşdırılan dəyər
                       </p>
-                      <p className="text-3xl font-bold gradient-text">
+                      <p className="text-3xl font-bold text-[#7F4CFF]">
                         $127,450
                       </p>
                     </div>
@@ -369,8 +293,8 @@ export default function LandingPage() {
                 {/* Mock insurance card */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#6366f1]/10 flex items-center justify-center">
-                      <Heart className="w-6 h-6 text-[#6366f1]" />
+                    <div className="w-12 h-12 rounded-xl bg-[#7F4CFF]/10 flex items-center justify-center">
+                      <Heart className="w-6 h-6 text-[#7F4CFF]" />
                     </div>
                     <div>
                       <p className="text-sm text-[#64748b]">
@@ -380,7 +304,7 @@ export default function LandingPage() {
                         $152,940
                       </p>
                       <p className="text-xs text-[#10b981]">
-                        ✓ Tam qorunma aktiv
+                        Tam qorunma aktiv
                       </p>
                     </div>
                   </div>
@@ -394,28 +318,16 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* =================== CTA SECTION =================== */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-            className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#6366f1] to-[#06b6d4] p-12 sm:p-16 text-center"
-          >
-            {/* Background patterns */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-white blur-3xl" />
-              <div className="absolute bottom-0 right-0 w-60 h-60 rounded-full bg-white blur-3xl" />
-            </div>
-
-            <motion.div variants={itemVariants} className="relative">
+          <div className="relative overflow-hidden rounded-3xl bg-[#7F4CFF] p-12 sm:p-16 text-center">
+            <div className="relative">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                 Gələcəyə investisiya bu gün başlayır
               </h2>
@@ -425,13 +337,13 @@ export default function LandingPage() {
               </p>
               <Link
                 href="/plan"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-[#6366f1] font-semibold text-lg hover:bg-white/90 transition-colors shadow-xl"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-[#7F4CFF] font-semibold text-lg hover:bg-white/90 transition-colors shadow-xl"
               >
                 Plan yarat
                 <ArrowRight className="w-5 h-5" />
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 

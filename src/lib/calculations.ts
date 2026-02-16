@@ -34,7 +34,6 @@ export function calculateProjection(plan: PlanData): ProjectionPoint[] {
       projected: Math.round(currentValue),
     });
 
-    // Add 12 months of contributions and growth
     for (let month = 0; month < 12; month++) {
       currentValue = (currentValue + plan.monthlyInvestment) * (1 + monthlyReturn);
       totalInvested += plan.monthlyInvestment;
@@ -90,13 +89,13 @@ export function getPortfolioAllocation(plan: PlanData) {
       name: "ABŞ ETF (S&P 500)",
       percentage: allocation.usaETF,
       amount: Math.round((monthlyAmount * allocation.usaETF) / 100),
-      color: "#6366f1",
+      color: "#7F4CFF",
     },
     {
       name: "Qlobal İndeks Fondu",
       percentage: allocation.globalIndex,
       amount: Math.round((monthlyAmount * allocation.globalIndex) / 100),
-      color: "#06b6d4",
+      color: "#3EC6FF",
     },
     {
       name: "Texnologiya Fondu",
@@ -117,7 +116,7 @@ export function predictEducationCosts(yearsUntil18: number): UniversityCost[] {
     {
       region: "Azərbaycan",
       currentCost: 8000,
-      projectedCost: Math.round(8000 * inflationMultiplier * 4), // 4-year degree
+      projectedCost: Math.round(8000 * inflationMultiplier * 4),
     },
     {
       region: "Avropa",
@@ -148,7 +147,6 @@ export function calculateRecommendedIncrease(
   const monthlyReturn = annualReturn / 12;
   const totalMonths = plan.planDuration * 12;
 
-  // Calculate additional monthly needed using future value of annuity formula
   const fvFactor =
     (Math.pow(1 + monthlyReturn, totalMonths) - 1) / monthlyReturn;
   return Math.round(gap / fvFactor);
@@ -165,12 +163,10 @@ export function generateAIInsights(plan: PlanData): string[] {
 
   const insights: string[] = [];
 
-  // Profit insight
   insights.push(
     `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} $ investisiya ilə təxminən ${finalValue.toLocaleString()} $ gəlir gətirəcək. Bu, ${profit.toLocaleString()} $ xalis mənfəət deməkdir.`
   );
 
-  // Education coverage insight
   const azCost = educationCosts[0].projectedCost;
   if (finalValue >= azCost) {
     insights.push(
@@ -183,7 +179,6 @@ export function generateAIInsights(plan: PlanData): string[] {
     );
   }
 
-  // Risk-specific insight
   if (plan.riskLevel === "high") {
     insights.push(
       "Yüksək risk profili seçmisiniz. Uzunmüddətli investisiyalarda yüksək risk daha çox gəlir potensialı verir, amma qısamüddətli dalğalanmalar ola bilər."
@@ -194,7 +189,6 @@ export function generateAIInsights(plan: PlanData): string[] {
     );
   }
 
-  // Monthly increase suggestion
   const europeCost = educationCosts[1].projectedCost;
   if (finalValue < europeCost) {
     const increase = calculateRecommendedIncrease(plan, europeCost);

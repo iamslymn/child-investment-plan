@@ -43,7 +43,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
     setMessages([
       {
         role: "ai",
-        content: `Salam! Mən sizin AI Maliyyə Məsləhətçinizəm. 🤖\n\nPlanınızı analiz etdim. İlk müşahidəm:\n\n${insights[0]}\n\nMənə suallarınızı verə bilərsiniz!`,
+        content: `Salam! Mən sizin AI Maliyyə Məsləhətçinizəm.\n\nPlanınızı analiz etdim. İlk müşahidəm:\n\n${insights[0]}\n\nMənə suallarınızı verə bilərsiniz!`,
       },
     ]);
   }, [plan]);
@@ -62,7 +62,6 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
   const processMessage = (query: string) => {
     const lowerQuery = query.toLowerCase();
 
-    // Education cost prediction
     if (
       lowerQuery.includes("təhsil") ||
       lowerQuery.includes("universit") ||
@@ -70,48 +69,45 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
     ) {
       const costs = predictEducationCosts(plan.planDuration);
       const finalValue = calculateFinalValue(plan);
-      return `📚 **Təhsil Xərcləri Proqnozu (${plan.planDuration} il sonra)**\n\n${costs
+      return `Təhsil Xərcləri Proqnozu (${plan.planDuration} il sonra)\n\n${costs
         .map(
           (c) =>
-            `• ${c.region}: ${c.projectedCost.toLocaleString()} $ (4 illik)\n  Hal-hazırda: ${(c.currentCost * 4).toLocaleString()} $/il`
+            `- ${c.region}: ${c.projectedCost.toLocaleString()} $ (4 illik)\n  Hal-hazırda: ${(c.currentCost * 4).toLocaleString()} $/il`
         )
         .join(
           "\n"
         )}\n\nSizin proqnozlaşdırılan məbləğ: ${finalValue.toLocaleString()} $\n\n${
         finalValue >= costs[0].projectedCost
-          ? "✅ Azərbaycanda təhsil xərclərini tam ödəyə bilərsiniz!"
-          : "⚠️ Hədəfə çatmaq üçün aylıq investisiyanı artırmağı tövsiyə edirik."
+          ? "Azərbaycanda təhsil xərclərini tam ödəyə bilərsiniz!"
+          : "Hədəfə çatmaq üçün aylıq investisiyanı artırmağı tövsiyə edirik."
       }`;
     }
 
-    // Investment advice
     if (
       lowerQuery.includes("məsləhət") ||
       lowerQuery.includes("artır") ||
       lowerQuery.includes("investisiya")
     ) {
       const insights = generateAIInsights(plan);
-      return `💡 **İnvestisiya Məsləhəti**\n\n${insights
+      return `İnvestisiya Məsləhəti\n\n${insights
         .slice(1)
-        .map((i) => `• ${i}`)
+        .map((i) => `- ${i}`)
         .join("\n\n")}`;
     }
 
-    // Post-18 plans
     if (
       lowerQuery.includes("18") ||
       lowerQuery.includes("sonra") ||
       lowerQuery.includes("plan")
     ) {
       const suggestions = generatePost18Suggestions(plan);
-      return `🎯 **18 Yaş Sonrası Planlar**\n\n${suggestions
-        .map((s) => `${s.icon} **${s.title}**\n${s.description}`)
+      return `18 Yaş Sonrası Planlar\n\n${suggestions
+        .map((s) => `${s.icon} ${s.title}\n${s.description}`)
         .join("\n\n")}`;
     }
 
-    // Risk question
     if (lowerQuery.includes("risk")) {
-      return `📊 **Risk Profili Analizi**\n\nHal-hazırda "${
+      return `Risk Profili Analizi\n\nHal-hazırda "${
         plan.riskLevel === "low"
           ? "Aşağı"
           : plan.riskLevel === "medium"
@@ -126,12 +122,11 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
       }`;
     }
 
-    // Default response
     const finalValue = calculateFinalValue(plan);
     const europeCost = predictEducationCosts(plan.planDuration)[1]
       .projectedCost;
     const increase = calculateRecommendedIncrease(plan, europeCost);
-    return `Mən aşağıdakı mövzularda kömək edə bilərəm:\n\n📚 Təhsil xərcləri proqnozu\n💡 İnvestisiya məsləhəti\n🎯 18 yaş sonrası planlar\n📊 Risk analizi\n\nProqnozlaşdırılan dəyər: ${finalValue.toLocaleString()} $${
+    return `Mən aşağıdakı mövzularda kömək edə bilərəm:\n\n- Təhsil xərcləri proqnozu\n- İnvestisiya məsləhəti\n- 18 yaş sonrası planlar\n- Risk analizi\n\nProqnozlaşdırılan dəyər: ${finalValue.toLocaleString()} $${
       increase > 0
         ? `\n\nTövsiyə: Avropada təhsil üçün aylıq ${increase} $ əlavə investisiya edin.`
         : ""
@@ -143,12 +138,10 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
     const text = query || input.trim();
     if (!text) return;
 
-    // Add user message
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI thinking delay
     setTimeout(() => {
       const response = processMessage(text);
       setMessages((prev) => [...prev, { role: "ai", content: response }]);
@@ -159,7 +152,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
   return (
     <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#6366f1] to-[#06b6d4] p-4">
+      <div className="bg-[#7F4CFF] p-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-white" />
@@ -181,7 +174,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
           <button
             key={action.query}
             onClick={() => handleSend(action.query)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6366f1]/5 border border-[#6366f1]/20 text-xs font-medium text-[#6366f1] hover:bg-[#6366f1]/10 whitespace-nowrap transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#7F4CFF]/5 border border-[#7F4CFF]/20 text-xs font-medium text-[#7F4CFF] hover:bg-[#7F4CFF]/10 whitespace-nowrap"
           >
             <action.icon className="w-3.5 h-3.5" />
             {action.label}
@@ -201,7 +194,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                 msg.role === "ai"
-                  ? "bg-gradient-to-br from-[#6366f1] to-[#06b6d4]"
+                  ? "bg-[#7F4CFF]"
                   : "bg-gray-200"
               }`}
             >
@@ -215,7 +208,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
               className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
                 msg.role === "ai"
                   ? "bg-gray-50 text-gray-800"
-                  : "bg-[#6366f1] text-white"
+                  : "bg-[#7F4CFF] text-white"
               }`}
             >
               {msg.content}
@@ -226,7 +219,7 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
         {/* Typing indicator */}
         {isTyping && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#6366f1] to-[#06b6d4] flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#7F4CFF] flex items-center justify-center flex-shrink-0">
               <Bot className="w-4 h-4 text-white" />
             </div>
             <div className="bg-gray-50 rounded-2xl px-4 py-3 flex gap-1">
@@ -253,11 +246,11 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Sualınızı yazın..."
-            className="flex-1 px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#6366f1]/30 focus:border-[#6366f1]"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-sm focus:outline-none focus:ring-2 focus:ring-[#7F4CFF]/30 focus:border-[#7F4CFF]"
           />
           <button
             onClick={() => handleSend()}
-            className="w-10 h-10 rounded-xl bg-[#6366f1] text-white flex items-center justify-center hover:bg-[#4f46e5] transition-colors"
+            className="w-10 h-10 rounded-xl bg-[#7F4CFF] text-white flex items-center justify-center hover:bg-[#6A35E0]"
           >
             <Send className="w-4 h-4" />
           </button>
