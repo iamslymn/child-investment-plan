@@ -72,11 +72,11 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
       return `Təhsil Xərcləri Proqnozu (${plan.planDuration} il sonra)\n\n${costs
         .map(
           (c) =>
-            `- ${c.region}: ${c.projectedCost.toLocaleString()} $ (4 illik)\n  Hal-hazırda: ${(c.currentCost * 4).toLocaleString()} $/il`
+            `- ${c.region}: ${c.projectedCost.toLocaleString()} ₼ (4 illik)\n  Hal-hazırda: ${(c.currentCost * 4).toLocaleString()} ₼/il`
         )
         .join(
           "\n"
-        )}\n\nSizin proqnozlaşdırılan məbləğ: ${finalValue.toLocaleString()} $\n\n${
+        )}\n\nSizin proqnozlaşdırılan məbləğ: ${finalValue.toLocaleString()} ₼\n\n${
         finalValue >= costs[0].projectedCost
           ? "Azərbaycanda təhsil xərclərini tam ödəyə bilərsiniz!"
           : "Hədəfə çatmaq üçün aylıq investisiyanı artırmağı tövsiyə edirik."
@@ -126,9 +126,9 @@ export default function AIAdvisor({ plan }: { plan: PlanData }) {
     const europeCost = predictEducationCosts(plan.planDuration)[1]
       .projectedCost;
     const increase = calculateRecommendedIncrease(plan, europeCost);
-    return `Mən aşağıdakı mövzularda kömək edə bilərəm:\n\n- Təhsil xərcləri proqnozu\n- İnvestisiya məsləhəti\n- 18 yaş sonrası planlar\n- Risk analizi\n\nProqnozlaşdırılan dəyər: ${finalValue.toLocaleString()} $${
+    return `Mən aşağıdakı mövzularda kömək edə bilərəm:\n\n- Təhsil xərcləri proqnozu\n- İnvestisiya məsləhəti\n- 18 yaş sonrası planlar\n- Risk analizi\n\nProqnozlaşdırılan dəyər: ${finalValue.toLocaleString()} ₼${
       increase > 0
-        ? `\n\nTövsiyə: Avropada təhsil üçün aylıq ${increase} $ əlavə investisiya edin.`
+        ? `\n\nTövsiyə: Avropada təhsil üçün aylıq ${increase} ₼ əlavə investisiya edin.`
         : ""
     }`;
   };

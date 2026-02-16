@@ -78,7 +78,7 @@ export default function LandingPage() {
   /** Stats for social proof */
   const stats = [
     { value: "15,000+", label: "Aktiv Plan" },
-    { value: "$45M+", label: "Ümumi İnvestisiya" },
+    { value: "45M+ ₼", label: "Ümumi İnvestisiya" },
     { value: "98%", label: "Müştəri Məmnuniyyəti" },
     { value: "12%", label: "Orta İllik Gəlir" },
   ];
@@ -242,7 +242,7 @@ export default function LandingPage() {
               </h2>
               <div className="space-y-5">
                 {[
-                  "Gündəlik $1-dən başlayan aylıq investisiya planları",
+                  "Gündəlik 1 ₼-dən başlayan aylıq investisiya planları",
                   "ABŞ və Avropa bazarlarına birbaşa çıxış",
                   "Həyat sığortası ilə tam qorunma",
                   "AI dəstəkli maliyyə məsləhətçisi",
@@ -277,7 +277,7 @@ export default function LandingPage() {
                         Proqnozlaşdırılan dəyər
                       </p>
                       <p className="text-3xl font-bold text-[#7F4CFF]">
-                        $127,450
+                        127,450 ₼
                       </p>
                     </div>
                     <div className="w-12 h-12 rounded-xl bg-[#10b981]/10 flex items-center justify-center">
@@ -301,7 +301,7 @@ export default function LandingPage() {
                         Həyat Sığortası
                       </p>
                       <p className="text-xl font-bold text-[#0f172a]">
-                        $152,940
+                        152,940 ₼
                       </p>
                       <p className="text-xs text-[#10b981]">
                         Tam qorunma aktiv

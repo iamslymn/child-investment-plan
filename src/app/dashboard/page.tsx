@@ -137,7 +137,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-sm text-[#64748b]">Cari Portfel Dəyəri</p>
             <p className="text-2xl font-bold text-[#0f172a] mt-1">
-              ${currentValue.toLocaleString()}
+              {currentValue.toLocaleString()} ₼
             </p>
           </div>
 
@@ -154,7 +154,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-sm text-[#64748b]">Proqnoz Dəyəri (18 yaş)</p>
             <p className="text-2xl font-bold text-[#0f172a] mt-1">
-              ${finalValue.toLocaleString()}
+              {finalValue.toLocaleString()} ₼
             </p>
           </div>
 
@@ -170,7 +170,7 @@ export default function DashboardPage() {
             </div>
             <p className="text-sm text-[#64748b]">Sığorta Təminatı</p>
             <p className="text-2xl font-bold text-[#0f172a] mt-1">
-              ${insuranceCoverage.toLocaleString()}
+              {insuranceCoverage.toLocaleString()} ₼
             </p>
           </div>
 
@@ -245,10 +245,10 @@ export default function DashboardPage() {
                     />
                     <YAxis
                       tick={{ fontSize: 12, fill: "#64748b" }}
-                      tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}k ₼`}
                     />
                     <Tooltip
-                      formatter={(value) => `$${Number(value).toLocaleString()}`}
+                      formatter={(value) => `${Number(value).toLocaleString()} ₼`}
                       labelFormatter={(label) => `Yaş: ${label}`}
                       contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                     />
@@ -277,9 +277,9 @@ export default function DashboardPage() {
                   <BarChart data={educationChartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: "#64748b" }} />
-                    <YAxis tick={{ fontSize: 12, fill: "#64748b" }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                    <YAxis tick={{ fontSize: 12, fill: "#64748b" }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k ₼`} />
                     <Tooltip
-                      formatter={(value) => `$${Number(value).toLocaleString()}`}
+                      formatter={(value) => `${Number(value).toLocaleString()} ₼`}
                       contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0" }}
                     />
                     <Bar dataKey="Cari Xərc" fill="#7F4CFF" radius={[8, 8, 0, 0]} />
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                   Sizin proqnozlaşdırılan məbləğ:
                 </span>
                 <span className="text-lg font-bold text-[#166534]">
-                  ${finalValue.toLocaleString()}
+                  {finalValue.toLocaleString()} ₼
                 </span>
               </div>
             </div>
@@ -378,7 +378,7 @@ export default function DashboardPage() {
 
               <div className="space-y-4">
                 {[
-                  { label: "Aylıq İnvestisiya", value: `$${plan.monthlyInvestment}` },
+                  { label: "Aylıq İnvestisiya", value: `${plan.monthlyInvestment} ₼` },
                   { label: "Plan Müddəti", value: `${plan.planDuration} il` },
                   { label: "Uşağın Yaşı", value: `${plan.childAge} yaş` },
                   { label: "Hədəf Yaş", value: `${plan.childAge + plan.planDuration} yaş` },

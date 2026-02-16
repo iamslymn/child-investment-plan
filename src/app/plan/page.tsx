@@ -279,14 +279,14 @@ export default function PlanPage() {
                   />
                   <div className="w-28 text-center bg-[#f1f5f9] rounded-xl px-4 py-2">
                     <span className="text-2xl font-bold text-[#10b981]">
-                      ${plan.monthlyInvestment}
+                      {plan.monthlyInvestment} ₼
                     </span>
                     <p className="text-xs text-[#64748b]">/ay</p>
                   </div>
                 </div>
                 <div className="flex justify-between mt-2 text-xs text-[#94a3b8]">
-                  <span>$50</span>
-                  <span>$2,000</span>
+                  <span>50 ₼</span>
+                  <span>2,000 ₼</span>
                 </div>
 
                 <div className="flex gap-2 mt-4">
@@ -302,7 +302,7 @@ export default function PlanPage() {
                           : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#e2e8f0]"
                       }`}
                     >
-                      ${amount}
+                      {amount} ₼
                     </button>
                   ))}
                 </div>
@@ -425,7 +425,7 @@ export default function PlanPage() {
                         <p className="text-xs text-[#64748b]">{item.percentage}% portfel</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-[#0f172a]">${item.amount}/ay</span>
+                    <span className="text-sm font-bold text-[#0f172a]">{item.amount} ₼/ay</span>
                   </div>
                 ))}
               </div>
@@ -457,10 +457,10 @@ export default function PlanPage() {
                     />
                     <YAxis
                       tick={{ fontSize: 12, fill: "#64748b" }}
-                      tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                      tickFormatter={(v) => `${(v / 1000).toFixed(0)}k ₼`}
                     />
                     <Tooltip
-                      formatter={(value) => `$${Number(value).toLocaleString()}`}
+                      formatter={(value) => `${Number(value).toLocaleString()} ₼`}
                       labelFormatter={(label) => `Yaş: ${label}`}
                       contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                     />
@@ -474,19 +474,19 @@ export default function PlanPage() {
                 <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
                   <p className="text-xs text-[#64748b]">Ümumi İnvestisiya</p>
                   <p className="text-lg font-bold text-[#7F4CFF]">
-                    ${calculateTotalInvested(plan).toLocaleString()}
+                    {calculateTotalInvested(plan).toLocaleString()} ₼
                   </p>
                 </div>
                 <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
                   <p className="text-xs text-[#64748b]">Proqnoz Dəyəri</p>
                   <p className="text-lg font-bold text-[#3EC6FF]">
-                    ${calculateFinalValue(plan).toLocaleString()}
+                    {calculateFinalValue(plan).toLocaleString()} ₼
                   </p>
                 </div>
                 <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
                   <p className="text-xs text-[#64748b]">Xalis Mənfəət</p>
                   <p className="text-lg font-bold text-[#10b981]">
-                    ${(calculateFinalValue(plan) - calculateTotalInvested(plan)).toLocaleString()}
+                    {(calculateFinalValue(plan) - calculateTotalInvested(plan)).toLocaleString()} ₼
                   </p>
                 </div>
               </div>
@@ -515,11 +515,11 @@ export default function PlanPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <p className="text-white/70 text-sm mb-1">Sığorta Məbləği</p>
-                  <p className="text-3xl font-bold">${calculateInsuranceCoverage(plan).toLocaleString()}</p>
+                  <p className="text-3xl font-bold">{calculateInsuranceCoverage(plan).toLocaleString()} ₼</p>
                 </div>
                 <div>
                   <p className="text-white/70 text-sm mb-1">Aylıq Premium</p>
-                  <p className="text-3xl font-bold">${calculateInsurancePremium(plan).toLocaleString()}</p>
+                  <p className="text-3xl font-bold">{calculateInsurancePremium(plan).toLocaleString()} ₼</p>
                 </div>
               </div>
             </div>
@@ -578,7 +578,7 @@ export default function PlanPage() {
               </div>
               <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
                 <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Aylıq İnvestisiya</p>
-                <p className="text-xl font-bold text-[#10b981]">${plan.monthlyInvestment}</p>
+                <p className="text-xl font-bold text-[#10b981]">{plan.monthlyInvestment} ₼</p>
               </div>
               <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
                 <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Risk Profili</p>
@@ -588,7 +588,7 @@ export default function PlanPage() {
               </div>
               <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
                 <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Aylıq Premium</p>
-                <p className="text-xl font-bold text-[#7F4CFF]">${calculateInsurancePremium(plan)}</p>
+                <p className="text-xl font-bold text-[#7F4CFF]">{calculateInsurancePremium(plan)} ₼</p>
               </div>
             </div>
 
@@ -596,15 +596,15 @@ export default function PlanPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                 <div>
                   <p className="text-white/70 text-sm mb-1">Ümumi İnvestisiya</p>
-                  <p className="text-2xl font-bold">${calculateTotalInvested(plan).toLocaleString()}</p>
+                  <p className="text-2xl font-bold">{calculateTotalInvested(plan).toLocaleString()} ₼</p>
                 </div>
                 <div>
                   <p className="text-white/70 text-sm mb-1">Proqnoz Dəyəri</p>
-                  <p className="text-2xl font-bold">${calculateFinalValue(plan).toLocaleString()}</p>
+                  <p className="text-2xl font-bold">{calculateFinalValue(plan).toLocaleString()} ₼</p>
                 </div>
                 <div>
                   <p className="text-white/70 text-sm mb-1">Sığorta Təminatı</p>
-                  <p className="text-2xl font-bold">${calculateInsuranceCoverage(plan).toLocaleString()}</p>
+                  <p className="text-2xl font-bold">{calculateInsuranceCoverage(plan).toLocaleString()} ₼</p>
                 </div>
               </div>
             </div>
@@ -615,7 +615,7 @@ export default function PlanPage() {
                 <p className="text-xs text-[#a16207]">İnvestisiya + Sığorta Premium</p>
               </div>
               <p className="text-2xl font-bold text-[#92400e]">
-                ${(plan.monthlyInvestment + calculateInsurancePremium(plan)).toLocaleString()}
+                {(plan.monthlyInvestment + calculateInsurancePremium(plan)).toLocaleString()} ₼
                 <span className="text-sm font-normal">/ay</span>
               </p>
             </div>

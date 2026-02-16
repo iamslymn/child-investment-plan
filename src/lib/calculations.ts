@@ -164,18 +164,18 @@ export function generateAIInsights(plan: PlanData): string[] {
   const insights: string[] = [];
 
   insights.push(
-    `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} $ investisiya ilə təxminən ${finalValue.toLocaleString()} $ gəlir gətirəcək. Bu, ${profit.toLocaleString()} $ xalis mənfəət deməkdir.`
+    `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} ₼ investisiya ilə təxminən ${finalValue.toLocaleString()} ₼ gəlir gətirəcək. Bu, ${profit.toLocaleString()} ₼ xalis mənfəət deməkdir.`
   );
 
   const azCost = educationCosts[0].projectedCost;
   if (finalValue >= azCost) {
     insights.push(
-      `Proqnozlaşdırılan məbləğ Azərbaycanda universitetin tam xərclərini (${azCost.toLocaleString()} $) ödəmək üçün kifayət edəcək.`
+      `Proqnozlaşdırılan məbləğ Azərbaycanda universitetin tam xərclərini (${azCost.toLocaleString()} ₼) ödəmək üçün kifayət edəcək.`
     );
   } else {
     const gap = azCost - finalValue;
     insights.push(
-      `Azərbaycanda universitetin tam xərci ${azCost.toLocaleString()} $ olacaq. Planınız ilə ${gap.toLocaleString()} $ fərq var. Aylıq investisiyanı artırmağı tövsiyə edirik.`
+      `Azərbaycanda universitetin tam xərci ${azCost.toLocaleString()} ₼ olacaq. Planınız ilə ${gap.toLocaleString()} ₼ fərq var. Aylıq investisiyanı artırmağı tövsiyə edirik.`
     );
   }
 
@@ -194,7 +194,7 @@ export function generateAIInsights(plan: PlanData): string[] {
     const increase = calculateRecommendedIncrease(plan, europeCost);
     if (increase > 0) {
       insights.push(
-        `Avropada təhsil planı üçün aylıq investisiyanızı ${increase} $ artırmağınız tövsiyə olunur.`
+        `Avropada təhsil planı üçün aylıq investisiyanızı ${increase} ₼ artırmağınız tövsiyə olunur.`
       );
     }
   }
@@ -211,7 +211,7 @@ export function generatePost18Suggestions(plan: PlanData) {
   return [
     {
       title: "Xaricdə təhsil planı",
-      description: `${finalValue.toLocaleString()} $ ilə Avropa və ya ABŞ-da bakalavr təhsili üçün büdcə planlaşdırın.`,
+      description: `${finalValue.toLocaleString()} ₼ ilə Avropa və ya ABŞ-da bakalavr təhsili üçün büdcə planlaşdırın.`,
       icon: "🎓",
     },
     {
@@ -222,7 +222,7 @@ export function generatePost18Suggestions(plan: PlanData) {
     },
     {
       title: "Start-up kapital planı",
-      description: `${finalValue.toLocaleString()} $ start-up kapitalı kimi istifadə edilə bilər. Texnologiya sektorunda yeni şirkət qurmaq üçün yetərlidir.`,
+      description: `${finalValue.toLocaleString()} ₼ start-up kapitalı kimi istifadə edilə bilər. Texnologiya sektorunda yeni şirkət qurmaq üçün yetərlidir.`,
       icon: "🚀",
     },
   ];
