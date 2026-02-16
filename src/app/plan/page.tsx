@@ -16,6 +16,8 @@ import {
   AlertTriangle,
   Zap,
   PieChart,
+  Lock,
+  Layers,
 } from "lucide-react";
 import {
   AreaChart,
@@ -32,13 +34,18 @@ import {
 import Navbar from "@/components/Navbar";
 import {
   PlanData,
+  PlanType,
   RiskLevel,
   RISK_LABELS,
   RISK_COLORS,
+  PLAN_TYPE_LABELS,
+  SAFE_PLAN_SPLIT,
 } from "@/lib/types";
 import {
   calculateProjection,
+  calculateSafeProjection,
   calculateFinalValue,
+  calculateSafeFinalValues,
   calculateTotalInvested,
   calculateInsuranceCoverage,
   calculateInsurancePremium,
@@ -62,6 +69,7 @@ export default function PlanPage() {
     planDuration: 18,
     monthlyInvestment: 200,
     riskLevel: "medium",
+    planType: "standard",
   });
 
   /** Update plan partially */
@@ -257,6 +265,69 @@ export default function PlanPage() {
             </div>
 
             <div className="space-y-10">
+              {/* Plan Type Selector */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-[#334155] mb-4">
+                  <Layers className="w-4 h-4 text-[#7F4CFF]" />
+                  Plan tipi
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {(["standard", "safe"] as PlanType[]).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => updatePlan({ planType: type })}
+                      className={`relative p-5 rounded-2xl border-2 text-left transition-all ${
+                        plan.planType === type
+                          ? "border-[#7F4CFF] bg-[#7F4CFF]/5 shadow-lg"
+                          : "border-[#e2e8f0] hover:border-[#7F4CFF]/30"
+                      }`}
+                    >
+                      {plan.planType === type && (
+                        <div className="absolute top-3 right-3">
+                          <CheckCircle2 className="w-5 h-5 text-[#7F4CFF]" />
+                        </div>
+                      )}
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+                        style={{
+                          backgroundColor:
+                            type === "standard"
+                              ? "rgba(62, 198, 255, 0.1)"
+                              : "rgba(16, 185, 129, 0.1)",
+                        }}
+                      >
+                        {type === "standard" ? (
+                          <TrendingUp className="w-5 h-5 text-[#3EC6FF]" />
+                        ) : (
+                          <Lock className="w-5 h-5 text-[#10b981]" />
+                        )}
+                      </div>
+                      <h4 className="font-semibold text-[#0f172a] text-sm">
+                        {PLAN_TYPE_LABELS[type]}
+                      </h4>
+                      <p className="text-xs text-[#64748b] mt-1">
+                        {type === "standard"
+                          ? "Aylıq məbləğin 100%-i investisiyaya yönləndirilir."
+                          : `Aylıq məbləğin ${SAFE_PLAN_SPLIT.savingsPercent}%-i yığıma, ${SAFE_PLAN_SPLIT.investmentPercent}%-i investisiyaya yönləndirilir.`}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Info label for selected plan type */}
+                <div
+                  className={`mt-3 px-4 py-2.5 rounded-xl text-xs font-medium ${
+                    plan.planType === "standard"
+                      ? "bg-[#3EC6FF]/10 text-[#0284c7]"
+                      : "bg-[#10b981]/10 text-[#047857]"
+                  }`}
+                >
+                  {plan.planType === "standard"
+                    ? "Aylıq məbləğin 100%-i investisiyaya yönləndirilir."
+                    : `Aylıq məbləğin ${SAFE_PLAN_SPLIT.savingsPercent}%-i təminatlı yığıma (illik 5%), ${SAFE_PLAN_SPLIT.investmentPercent}%-i investisiya portfelinə yönləndirilir.`}
+                </div>
+              </div>
+
               {/* Monthly Investment Slider */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-[#334155] mb-3">
@@ -371,7 +442,13 @@ export default function PlanPage() {
         )}
 
         {/* ========== STEP 3: Portfolio ========== */}
-        {step === 3 && (
+        {step === 3 && (() => {
+          const safeValues = plan.planType === "safe" ? calculateSafeFinalValues(plan) : null;
+          const projectionData = plan.planType === "safe"
+            ? calculateSafeProjection(plan)
+            : calculateProjection(plan);
+
+          return (
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#e2e8f0]">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-[#f59e0b]/10 flex items-center justify-center">
@@ -382,10 +459,38 @@ export default function PlanPage() {
                   Portfel Bölgüsü
                 </h2>
                 <p className="text-sm text-[#64748b]">
-                  Seçilmiş risk profilinə uyğun portfel strukturu
+                  {plan.planType === "safe"
+                    ? "Təhlükəsiz plan: yığım + investisiya portfeli"
+                    : "Seçilmiş risk profilinə uyğun portfel strukturu"}
                 </p>
               </div>
             </div>
+
+            {/* Safe plan split info banner */}
+            {plan.planType === "safe" && (
+              <div className="mb-6 p-4 bg-[#10b981]/5 rounded-2xl border border-[#10b981]/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Lock className="w-4 h-4 text-[#10b981]" />
+                  <span className="text-sm font-semibold text-[#0f172a]">Aylıq bölgü</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                    <p className="text-xs text-[#64748b]">Yığım hissəsi ({SAFE_PLAN_SPLIT.savingsPercent}%)</p>
+                    <p className="text-lg font-bold text-[#10b981]">
+                      {Math.round(plan.monthlyInvestment * SAFE_PLAN_SPLIT.savingsPercent / 100)} ₼/ay
+                    </p>
+                    <p className="text-xs text-[#94a3b8] mt-0.5">İllik 5% təminatlı</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                    <p className="text-xs text-[#64748b]">İnvestisiya hissəsi ({SAFE_PLAN_SPLIT.investmentPercent}%)</p>
+                    <p className="text-lg font-bold text-[#7F4CFF]">
+                      {Math.round(plan.monthlyInvestment * SAFE_PLAN_SPLIT.investmentPercent / 100)} ₼/ay
+                    </p>
+                    <p className="text-xs text-[#94a3b8] mt-0.5">Portfel əsaslı</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="h-64">
@@ -438,7 +543,7 @@ export default function PlanPage() {
               </h3>
               <div className="h-72 bg-[#f8fafc] rounded-2xl p-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={calculateProjection(plan)}>
+                  <AreaChart data={projectionData}>
                     <defs>
                       <linearGradient id="investedGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#7F4CFF" stopOpacity={0.2} />
@@ -447,6 +552,10 @@ export default function PlanPage() {
                       <linearGradient id="projectedGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#3EC6FF" stopOpacity={0.2} />
                         <stop offset="100%" stopColor="#3EC6FF" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="savingsGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.2} />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -465,34 +574,68 @@ export default function PlanPage() {
                       contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                     />
                     <Area type="monotone" dataKey="invested" name="İnvestisiya" stroke="#7F4CFF" fill="url(#investedGrad)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="projected" name="Proqnoz" stroke="#3EC6FF" fill="url(#projectedGrad)" strokeWidth={2} />
+                    {plan.planType === "safe" && (
+                      <Area type="monotone" dataKey="savingsValue" name="Yığım" stroke="#10b981" fill="url(#savingsGrad)" strokeWidth={2} />
+                    )}
+                    <Area type="monotone" dataKey="projected" name={plan.planType === "safe" ? "Cəmi Proqnoz" : "Proqnoz"} stroke="#3EC6FF" fill="url(#projectedGrad)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-4">
-                <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
-                  <p className="text-xs text-[#64748b]">Ümumi İnvestisiya</p>
-                  <p className="text-lg font-bold text-[#7F4CFF]">
-                    {calculateTotalInvested(plan).toLocaleString()} ₼
-                  </p>
+              {/* Summary cards — differ by plan type */}
+              {plan.planType === "safe" && safeValues ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                  <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
+                    <p className="text-xs text-[#64748b]">Ümumi Ödəniş</p>
+                    <p className="text-lg font-bold text-[#7F4CFF]">
+                      {calculateTotalInvested(plan).toLocaleString()} ₼
+                    </p>
+                  </div>
+                  <div className="text-center p-3 bg-[#10b981]/5 rounded-xl border border-[#10b981]/20">
+                    <p className="text-xs text-[#64748b]">Yığım hissəsi</p>
+                    <p className="text-lg font-bold text-[#10b981]">
+                      {safeValues.savingsValue.toLocaleString()} ₼
+                    </p>
+                  </div>
+                  <div className="text-center p-3 bg-[#7F4CFF]/5 rounded-xl border border-[#7F4CFF]/20">
+                    <p className="text-xs text-[#64748b]">İnvestisiya hissəsi</p>
+                    <p className="text-lg font-bold text-[#7F4CFF]">
+                      {safeValues.investmentValue.toLocaleString()} ₼
+                    </p>
+                  </div>
+                  <div className="text-center p-3 bg-[#3EC6FF]/5 rounded-xl border border-[#3EC6FF]/20">
+                    <p className="text-xs text-[#64748b]">Cəmi proqnoz</p>
+                    <p className="text-lg font-bold text-[#3EC6FF]">
+                      {safeValues.total.toLocaleString()} ₼
+                    </p>
+                  </div>
                 </div>
-                <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
-                  <p className="text-xs text-[#64748b]">Proqnoz Dəyəri</p>
-                  <p className="text-lg font-bold text-[#3EC6FF]">
-                    {calculateFinalValue(plan).toLocaleString()} ₼
-                  </p>
+              ) : (
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
+                    <p className="text-xs text-[#64748b]">Ümumi İnvestisiya</p>
+                    <p className="text-lg font-bold text-[#7F4CFF]">
+                      {calculateTotalInvested(plan).toLocaleString()} ₼
+                    </p>
+                  </div>
+                  <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
+                    <p className="text-xs text-[#64748b]">Proqnoz Dəyəri</p>
+                    <p className="text-lg font-bold text-[#3EC6FF]">
+                      {calculateFinalValue(plan).toLocaleString()} ₼
+                    </p>
+                  </div>
+                  <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
+                    <p className="text-xs text-[#64748b]">Xalis Mənfəət</p>
+                    <p className="text-lg font-bold text-[#10b981]">
+                      {(calculateFinalValue(plan) - calculateTotalInvested(plan)).toLocaleString()} ₼
+                    </p>
+                  </div>
                 </div>
-                <div className="text-center p-3 bg-[#f1f5f9] rounded-xl">
-                  <p className="text-xs text-[#64748b]">Xalis Mənfəət</p>
-                  <p className="text-lg font-bold text-[#10b981]">
-                    {(calculateFinalValue(plan) - calculateTotalInvested(plan)).toLocaleString()} ₼
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* ========== STEP 4: Insurance ========== */}
         {step === 4 && (
@@ -551,7 +694,10 @@ export default function PlanPage() {
         )}
 
         {/* ========== STEP 5: Summary ========== */}
-        {step === 5 && (
+        {step === 5 && (() => {
+          const safeVals = plan.planType === "safe" ? calculateSafeFinalValues(plan) : null;
+
+          return (
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#e2e8f0]">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-[#10b981]/10 flex items-center justify-center">
@@ -577,8 +723,14 @@ export default function PlanPage() {
                 <p className="text-xl font-bold text-[#0f172a]">{plan.planDuration} il</p>
               </div>
               <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
-                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Aylıq İnvestisiya</p>
+                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Aylıq Məbləğ</p>
                 <p className="text-xl font-bold text-[#10b981]">{plan.monthlyInvestment} ₼</p>
+              </div>
+              <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
+                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Plan Tipi</p>
+                <p className="text-xl font-bold" style={{ color: plan.planType === "safe" ? "#10b981" : "#3EC6FF" }}>
+                  {PLAN_TYPE_LABELS[plan.planType]}
+                </p>
               </div>
               <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
                 <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Risk Profili</p>
@@ -586,16 +738,36 @@ export default function PlanPage() {
                   {RISK_LABELS[plan.riskLevel]}
                 </p>
               </div>
-              <div className="p-5 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0]">
-                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Aylıq Premium</p>
-                <p className="text-xl font-bold text-[#7F4CFF]">{calculateInsurancePremium(plan)} ₼</p>
-              </div>
             </div>
+
+            {/* Safe plan split breakdown card */}
+            {plan.planType === "safe" && safeVals && (
+              <div className="mb-6 p-5 bg-[#10b981]/5 rounded-2xl border border-[#10b981]/20">
+                <h4 className="text-sm font-semibold text-[#0f172a] mb-3 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#10b981]" />
+                  Təhlükəsiz Plan Bölgüsü
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                    <p className="text-xs text-[#64748b]">Yığım hissəsi</p>
+                    <p className="text-xl font-bold text-[#10b981]">{safeVals.savingsValue.toLocaleString()} ₼</p>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                    <p className="text-xs text-[#64748b]">İnvestisiya hissəsi</p>
+                    <p className="text-xl font-bold text-[#7F4CFF]">{safeVals.investmentValue.toLocaleString()} ₼</p>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                    <p className="text-xs text-[#64748b]">Cəmi proqnoz</p>
+                    <p className="text-xl font-bold text-[#3EC6FF]">{safeVals.total.toLocaleString()} ₼</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="bg-[#7F4CFF] rounded-2xl p-6 text-white mb-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                 <div>
-                  <p className="text-white/70 text-sm mb-1">Ümumi İnvestisiya</p>
+                  <p className="text-white/70 text-sm mb-1">Ümumi Ödəniş</p>
                   <p className="text-2xl font-bold">{calculateTotalInvested(plan).toLocaleString()} ₼</p>
                 </div>
                 <div>
@@ -620,7 +792,8 @@ export default function PlanPage() {
               </p>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* =================== NAVIGATION BUTTONS =================== */}
         <div className="flex items-center justify-between mt-8">

@@ -3,6 +3,9 @@
 /** Risk level options for the investment plan */
 export type RiskLevel = "low" | "medium" | "high";
 
+/** Plan type: "standard" = 100% investment, "safe" = split savings + investment */
+export type PlanType = "standard" | "safe";
+
 /** Risk level labels in Azerbaijani */
 export const RISK_LABELS: Record<RiskLevel, string> = {
   low: "Aşağı risk",
@@ -16,6 +19,27 @@ export const RISK_COLORS: Record<RiskLevel, string> = {
   medium: "#f59e0b",
   high: "#ef4444",
 };
+
+/** Plan type labels in Azerbaijani */
+export const PLAN_TYPE_LABELS: Record<PlanType, string> = {
+  standard: "Standart (İnvestisiya əsaslı)",
+  safe: "Təhlükəsiz (Yığım + İnvestisiya)",
+};
+
+/** Plan type short labels for dashboard */
+export const PLAN_TYPE_SHORT_LABELS: Record<PlanType, string> = {
+  standard: "Standart",
+  safe: "Təhlükəsiz",
+};
+
+/** Split percentages for the "safe" plan type */
+export const SAFE_PLAN_SPLIT = {
+  savingsPercent: 60,
+  investmentPercent: 40,
+} as const;
+
+/** Fixed annual interest rate for the savings bucket in "safe" plan (demo) */
+export const SAFE_SAVINGS_ANNUAL_RATE = 0.05;
 
 /** Portfolio allocation percentages per risk level */
 export const PORTFOLIO_ALLOCATIONS: Record<
@@ -41,6 +65,7 @@ export interface PlanData {
   planDuration: number;
   monthlyInvestment: number;
   riskLevel: RiskLevel;
+  planType: PlanType;
 }
 
 /** Projection data point for charts */
@@ -49,6 +74,12 @@ export interface ProjectionPoint {
   age: number;
   invested: number;
   projected: number;
+}
+
+/** Projection data point for the "safe" plan with split buckets */
+export interface SafeProjectionPoint extends ProjectionPoint {
+  savingsValue: number;
+  investmentValue: number;
 }
 
 /** University cost data for AI advisor */

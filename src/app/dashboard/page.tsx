@@ -12,6 +12,7 @@ import {
   ArrowUpRight,
   PieChart as PieIcon,
   Activity,
+  Lock,
 } from "lucide-react";
 import {
   AreaChart,
@@ -30,10 +31,18 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AIAdvisor from "@/components/AIAdvisor";
-import { PlanData, RISK_LABELS, RISK_COLORS } from "@/lib/types";
+import {
+  PlanData,
+  RISK_LABELS,
+  RISK_COLORS,
+  PLAN_TYPE_SHORT_LABELS,
+  SAFE_PLAN_SPLIT,
+} from "@/lib/types";
 import {
   calculateProjection,
+  calculateSafeProjection,
   calculateFinalValue,
+  calculateSafeFinalValues,
   calculateTotalInvested,
   calculateInsuranceCoverage,
   getPortfolioAllocation,
@@ -52,7 +61,10 @@ export default function DashboardPage() {
   useEffect(() => {
     const saved = localStorage.getItem("childPlan");
     if (saved) {
-      setPlan(JSON.parse(saved));
+      const parsed = JSON.parse(saved) as PlanData;
+      /** Backward compat: plans created before planType was added default to "standard" */
+      if (!parsed.planType) parsed.planType = "standard";
+      setPlan(parsed);
     }
   }, []);
 
@@ -85,7 +97,10 @@ export default function DashboardPage() {
   }
 
   /** Derived calculations */
-  const projection = calculateProjection(plan);
+  const isSafePlan = plan.planType === "safe";
+  const projection = isSafePlan
+    ? calculateSafeProjection(plan)
+    : calculateProjection(plan);
   const finalValue = calculateFinalValue(plan);
   const totalInvested = calculateTotalInvested(plan);
   const insuranceCoverage = calculateInsuranceCoverage(plan);
@@ -94,6 +109,7 @@ export default function DashboardPage() {
   const aiInsights = generateAIInsights(plan);
   const profit = finalValue - totalInvested;
   const profitPercentage = ((profit / totalInvested) * 100).toFixed(1);
+  const safeValues = isSafePlan ? calculateSafeFinalValues(plan) : null;
 
   /** Simulated current progress (mock: 15% into the plan for demo) */
   const progressPercent = 15;
@@ -101,6 +117,14 @@ export default function DashboardPage() {
   const currentValue = Math.round(
     currentInvested * (1 + (finalValue / totalInvested - 1) * 0.3)
   );
+
+  /** For safe plan: simulated current balances based on progress */
+  const currentSavingsBalance = isSafePlan && safeValues
+    ? Math.round(safeValues.savingsValue * (progressPercent / 100))
+    : 0;
+  const currentInvestmentBalance = isSafePlan && safeValues
+    ? Math.round(safeValues.investmentValue * (progressPercent / 100))
+    : 0;
 
   /** Education cost bar chart data */
   const educationChartData = educationCosts.map((c) => ({
@@ -135,7 +159,7 @@ export default function DashboardPage() {
                 +{((currentValue / currentInvested - 1) * 100).toFixed(1)}%
               </span>
             </div>
-            <p className="text-sm text-[#64748b]">Cari Portfel Dəyəri</p>
+            <p className="text-sm text-[#64748b]">{isSafePlan ? "Ümumi balans" : "Cari Portfel Dəyəri"}</p>
             <p className="text-2xl font-bold text-[#0f172a] mt-1">
               {currentValue.toLocaleString()} ₼
             </p>
@@ -197,6 +221,41 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* =================== SAFE PLAN BALANCE BREAKDOWN =================== */}
+        {isSafePlan && safeValues && (
+          <div className="mb-8 bg-white rounded-2xl p-6 border border-[#10b981]/20 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-[#10b981]/10 flex items-center justify-center">
+                <Lock className="w-5 h-5 text-[#10b981]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#0f172a]">Təhlükəsiz Plan Balansları</h3>
+                <p className="text-sm text-[#64748b]">
+                  Aylıq {plan.monthlyInvestment} ₼: {SAFE_PLAN_SPLIT.savingsPercent}% yığım + {SAFE_PLAN_SPLIT.investmentPercent}% investisiya
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 bg-[#10b981]/5 rounded-2xl border border-[#10b981]/20">
+                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Yığım balansı</p>
+                <p className="text-2xl font-bold text-[#10b981]">{currentSavingsBalance.toLocaleString()} ₼</p>
+                <p className="text-xs text-[#94a3b8] mt-1">Proqnoz: {safeValues.savingsValue.toLocaleString()} ₼</p>
+              </div>
+              <div className="p-5 bg-[#7F4CFF]/5 rounded-2xl border border-[#7F4CFF]/20">
+                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">İnvestisiya balansı</p>
+                <p className="text-2xl font-bold text-[#7F4CFF]">{currentInvestmentBalance.toLocaleString()} ₼</p>
+                <p className="text-xs text-[#94a3b8] mt-1">Proqnoz: {safeValues.investmentValue.toLocaleString()} ₼</p>
+              </div>
+              <div className="p-5 bg-[#3EC6FF]/5 rounded-2xl border border-[#3EC6FF]/20">
+                <p className="text-xs text-[#64748b] uppercase tracking-wide mb-1">Ümumi balans</p>
+                <p className="text-2xl font-bold text-[#3EC6FF]">{currentValue.toLocaleString()} ₼</p>
+                <p className="text-xs text-[#94a3b8] mt-1">Proqnoz: {safeValues.total.toLocaleString()} ₼</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* =================== MAIN CONTENT =================== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* ===== LEFT COLUMN (2/3) ===== */}
@@ -206,20 +265,26 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-lg font-semibold text-[#0f172a]">
-                    İnvestisiya Artım Qrafiki
+                    {isSafePlan ? "Yığım + İnvestisiya Artım Qrafiki" : "İnvestisiya Artım Qrafiki"}
                   </h3>
                   <p className="text-sm text-[#64748b]">
-                    İnvestisiya vs Proqnoz dəyəri
+                    {isSafePlan ? "Yığım, İnvestisiya və Cəmi proqnoz" : "İnvestisiya vs Proqnoz dəyəri"}
                   </p>
                 </div>
-                <div className="flex items-center gap-4 text-xs">
+                <div className="flex items-center gap-4 text-xs flex-wrap">
                   <span className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-[#7F4CFF]" />
-                    İnvestisiya
+                    {isSafePlan ? "Ödəniş" : "İnvestisiya"}
                   </span>
+                  {isSafePlan && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-[#10b981]" />
+                      Yığım
+                    </span>
+                  )}
                   <span className="flex items-center gap-1.5">
                     <span className="w-3 h-3 rounded-full bg-[#3EC6FF]" />
-                    Proqnoz
+                    {isSafePlan ? "Cəmi" : "Proqnoz"}
                   </span>
                 </div>
               </div>
@@ -235,6 +300,10 @@ export default function DashboardPage() {
                       <linearGradient id="dashProjectedGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#3EC6FF" stopOpacity={0.2} />
                         <stop offset="100%" stopColor="#3EC6FF" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="dashSavingsGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.2} />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -252,8 +321,11 @@ export default function DashboardPage() {
                       labelFormatter={(label) => `Yaş: ${label}`}
                       contentStyle={{ borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                     />
-                    <Area type="monotone" dataKey="invested" name="İnvestisiya" stroke="#7F4CFF" fill="url(#dashInvestedGrad)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="projected" name="Proqnoz" stroke="#3EC6FF" fill="url(#dashProjectedGrad)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="invested" name={isSafePlan ? "Ödəniş" : "İnvestisiya"} stroke="#7F4CFF" fill="url(#dashInvestedGrad)" strokeWidth={2} />
+                    {isSafePlan && (
+                      <Area type="monotone" dataKey="savingsValue" name="Yığım" stroke="#10b981" fill="url(#dashSavingsGrad)" strokeWidth={2} />
+                    )}
+                    <Area type="monotone" dataKey="projected" name={isSafePlan ? "Cəmi" : "Proqnoz"} stroke="#3EC6FF" fill="url(#dashProjectedGrad)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -378,7 +450,20 @@ export default function DashboardPage() {
 
               <div className="space-y-4">
                 {[
-                  { label: "Aylıq İnvestisiya", value: `${plan.monthlyInvestment} ₼` },
+                  { label: "Plan Tipi", value: PLAN_TYPE_SHORT_LABELS[plan.planType] },
+                  { label: "Aylıq Məbləğ", value: `${plan.monthlyInvestment} ₼` },
+                  ...(isSafePlan
+                    ? [
+                        {
+                          label: "Yığım hissəsi",
+                          value: `${Math.round(plan.monthlyInvestment * SAFE_PLAN_SPLIT.savingsPercent / 100)} ₼/ay`,
+                        },
+                        {
+                          label: "İnvestisiya hissəsi",
+                          value: `${Math.round(plan.monthlyInvestment * SAFE_PLAN_SPLIT.investmentPercent / 100)} ₼/ay`,
+                        },
+                      ]
+                    : []),
                   { label: "Plan Müddəti", value: `${plan.planDuration} il` },
                   { label: "Uşağın Yaşı", value: `${plan.childAge} yaş` },
                   { label: "Hədəf Yaş", value: `${plan.childAge + plan.planDuration} yaş` },

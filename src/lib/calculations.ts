@@ -1,24 +1,68 @@
 /**
  * Financial calculation utilities for the Child Investment Plan.
  * Uses simplified simulation formulas suitable for an MVP demo.
+ *
+ * Supports two plan types:
+ *   - "standard": 100% of monthly amount goes to investment portfolio
+ *   - "safe": 60% goes to guaranteed savings bucket, 40% to investment portfolio
  */
 
 import {
   PlanData,
   ProjectionPoint,
+  SafeProjectionPoint,
   EXPECTED_RETURNS,
   PORTFOLIO_ALLOCATIONS,
+  SAFE_PLAN_SPLIT,
+  SAFE_SAVINGS_ANNUAL_RATE,
   UniversityCost,
 } from "./types";
 
 /** Average annual inflation rate used in calculations */
 const INFLATION_RATE = 0.05;
 
+// ---------------------------------------------------------------------------
+// Helper: compound monthly growth
+// ---------------------------------------------------------------------------
+
+/**
+ * Calculate future value with monthly contributions and compound interest.
+ * @param principal   Starting balance
+ * @param annualRate  Annual interest rate (e.g. 0.05 for 5%)
+ * @param months      Number of months
+ * @param monthlyContribution  Amount added each month
+ * @returns Future value after `months` months
+ */
+export function compoundMonthly(
+  principal: number,
+  annualRate: number,
+  months: number,
+  monthlyContribution: number
+): number {
+  const monthlyRate = annualRate / 12;
+  let value = principal;
+  for (let m = 0; m < months; m++) {
+    value = (value + monthlyContribution) * (1 + monthlyRate);
+  }
+  return value;
+}
+
+// ---------------------------------------------------------------------------
+// Standard projection (existing logic, unchanged)
+// ---------------------------------------------------------------------------
+
 /**
  * Calculate projected investment growth over the plan duration.
  * Uses compound interest formula with monthly contributions.
+ * Works for BOTH plan types — for "safe" plans the caller should use
+ * calculateSafeProjection() which provides the bucket split.
  */
 export function calculateProjection(plan: PlanData): ProjectionPoint[] {
+  const monthlyInvestment =
+    plan.planType === "safe"
+      ? plan.monthlyInvestment * (SAFE_PLAN_SPLIT.investmentPercent / 100)
+      : plan.monthlyInvestment;
+
   const annualReturn = EXPECTED_RETURNS[plan.riskLevel] / 100;
   const monthlyReturn = annualReturn / 12;
   const points: ProjectionPoint[] = [];
@@ -35,7 +79,53 @@ export function calculateProjection(plan: PlanData): ProjectionPoint[] {
     });
 
     for (let month = 0; month < 12; month++) {
-      currentValue = (currentValue + plan.monthlyInvestment) * (1 + monthlyReturn);
+      currentValue = (currentValue + monthlyInvestment) * (1 + monthlyReturn);
+      totalInvested += monthlyInvestment;
+    }
+  }
+
+  return points;
+}
+
+// ---------------------------------------------------------------------------
+// Safe plan projection (split buckets)
+// ---------------------------------------------------------------------------
+
+/**
+ * Calculate projection for "safe" plan type with savings + investment split.
+ * Returns yearly snapshots with separate bucket values.
+ */
+export function calculateSafeProjection(plan: PlanData): SafeProjectionPoint[] {
+  const savingsContribution =
+    plan.monthlyInvestment * (SAFE_PLAN_SPLIT.savingsPercent / 100);
+  const investmentContribution =
+    plan.monthlyInvestment * (SAFE_PLAN_SPLIT.investmentPercent / 100);
+
+  const investmentAnnualReturn = EXPECTED_RETURNS[plan.riskLevel] / 100;
+  const investmentMonthlyReturn = investmentAnnualReturn / 12;
+  const savingsMonthlyReturn = SAFE_SAVINGS_ANNUAL_RATE / 12;
+
+  const points: SafeProjectionPoint[] = [];
+  let totalInvested = 0;
+  let savingsValue = 0;
+  let investmentValue = 0;
+
+  for (let year = 0; year <= plan.planDuration; year++) {
+    points.push({
+      year,
+      age: plan.childAge + year,
+      invested: Math.round(totalInvested),
+      projected: Math.round(savingsValue + investmentValue),
+      savingsValue: Math.round(savingsValue),
+      investmentValue: Math.round(investmentValue),
+    });
+
+    for (let month = 0; month < 12; month++) {
+      savingsValue =
+        (savingsValue + savingsContribution) * (1 + savingsMonthlyReturn);
+      investmentValue =
+        (investmentValue + investmentContribution) *
+        (1 + investmentMonthlyReturn);
       totalInvested += plan.monthlyInvestment;
     }
   }
@@ -43,12 +133,35 @@ export function calculateProjection(plan: PlanData): ProjectionPoint[] {
   return points;
 }
 
+// ---------------------------------------------------------------------------
+// Convenience wrappers (plan-type-aware)
+// ---------------------------------------------------------------------------
+
 /**
  * Calculate the final projected value at end of plan.
+ * Automatically picks the correct projection based on planType.
  */
 export function calculateFinalValue(plan: PlanData): number {
+  if (plan.planType === "safe") {
+    const projection = calculateSafeProjection(plan);
+    return projection[projection.length - 1]?.projected || 0;
+  }
   const projection = calculateProjection(plan);
   return projection[projection.length - 1]?.projected || 0;
+}
+
+/**
+ * Get the final split values for "safe" plan type.
+ * Returns { savingsValue, investmentValue, total }.
+ */
+export function calculateSafeFinalValues(plan: PlanData) {
+  const projection = calculateSafeProjection(plan);
+  const last = projection[projection.length - 1];
+  return {
+    savingsValue: last?.savingsValue || 0,
+    investmentValue: last?.investmentValue || 0,
+    total: last?.projected || 0,
+  };
 }
 
 /**
@@ -79,10 +192,14 @@ export function calculateInsurancePremium(plan: PlanData): number {
 
 /**
  * Get portfolio allocation details for a given risk level.
+ * For "safe" plan type, the investment portion is only 40% of monthly amount.
  */
 export function getPortfolioAllocation(plan: PlanData) {
   const allocation = PORTFOLIO_ALLOCATIONS[plan.riskLevel];
-  const monthlyAmount = plan.monthlyInvestment;
+  const monthlyAmount =
+    plan.planType === "safe"
+      ? plan.monthlyInvestment * (SAFE_PLAN_SPLIT.investmentPercent / 100)
+      : plan.monthlyInvestment;
 
   return [
     {
@@ -163,9 +280,16 @@ export function generateAIInsights(plan: PlanData): string[] {
 
   const insights: string[] = [];
 
-  insights.push(
-    `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} ₼ investisiya ilə təxminən ${finalValue.toLocaleString()} ₼ gəlir gətirəcək. Bu, ${profit.toLocaleString()} ₼ xalis mənfəət deməkdir.`
-  );
+  if (plan.planType === "safe") {
+    const safe = calculateSafeFinalValues(plan);
+    insights.push(
+      `Təhlükəsiz plan seçmisiniz. ${plan.planDuration} il ərzində yığım hissəsi ${safe.savingsValue.toLocaleString()} ₼, investisiya hissəsi ${safe.investmentValue.toLocaleString()} ₼ olmaqla ümumi ${safe.total.toLocaleString()} ₼ proqnozlaşdırılır.`
+    );
+  } else {
+    insights.push(
+      `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} ₼ investisiya ilə təxminən ${finalValue.toLocaleString()} ₼ gəlir gətirəcək. Bu, ${profit.toLocaleString()} ₼ xalis mənfəət deməkdir.`
+    );
+  }
 
   const azCost = educationCosts[0].projectedCost;
   if (finalValue >= azCost) {
