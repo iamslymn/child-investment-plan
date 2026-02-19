@@ -15,72 +15,53 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/lib/LanguageContext";
 
-/**
- * Landing page for Child Investment Plan.
- * Features: Hero section, features grid, how it works, CTA.
- * All text in Azerbaijani. No framer-motion — simple CSS transitions only.
- */
 export default function LandingPage() {
-  /** Feature cards data */
+  const { t } = useLanguage();
+
   const features = [
     {
       icon: TrendingUp,
-      title: "İnvestisiya Portfeli",
-      description:
-        "ABŞ ETF, Qlobal İndeks və Texnologiya fondlarına aylıq investisiya ilə uşağınızın gələcəyini qurun.",
+      title: t("feature_portfolio_title"),
+      description: t("feature_portfolio_desc"),
       color: "#7F4CFF",
     },
     {
       icon: Shield,
-      title: "Həyat Sığortası",
-      description:
-        "Valideyn vəfat edərsə plan davam edəcək. Uşağınızın gələcəyi hər şəraitdə təmin olunur.",
+      title: t("feature_insurance_title"),
+      description: t("feature_insurance_desc"),
       color: "#3EC6FF",
     },
     {
       icon: Brain,
-      title: "AI Dəstəyi",
-      description:
-        "Süni intellekt ilə təhsil xərcləri proqnozu, investisiya məsləhəti və maliyyə planlaşdırması.",
+      title: t("feature_ai_title"),
+      description: t("feature_ai_desc"),
       color: "#f59e0b",
     },
   ];
 
-  /** How it works steps */
   const steps = [
-    {
-      number: "01",
-      title: "Planınızı yaradın",
-      description:
-        "Uşağınızın yaşını, plan müddətini və aylıq investisiya məbləğini seçin.",
-    },
-    {
-      number: "02",
-      title: "Risk profilinizi seçin",
-      description:
-        "Aşağı, orta və ya yüksək risk profilindən birini seçərək portfelinizi formalaşdırın.",
-    },
-    {
-      number: "03",
-      title: "AI ilə optimallaşdırın",
-      description:
-        "AI Məsləhətçi sizə ən uyğun strategiyanı tövsiyə edəcək.",
-    },
-    {
-      number: "04",
-      title: "Gələcəyi izləyin",
-      description:
-        "İdarə panelindən investisiyanızın böyüməsini real vaxt rejimində izləyin.",
-    },
+    { number: "01", title: t("how_step1_title"), description: t("how_step1_desc") },
+    { number: "02", title: t("how_step2_title"), description: t("how_step2_desc") },
+    { number: "03", title: t("how_step3_title"), description: t("how_step3_desc") },
+    { number: "04", title: t("how_step4_title"), description: t("how_step4_desc") },
   ];
 
-  /** Stats for social proof */
   const stats = [
-    { value: "15,000+", label: "Aktiv Plan" },
-    { value: "45M+ ₼", label: "Ümumi İnvestisiya" },
-    { value: "98%", label: "Müştəri Məmnuniyyəti" },
-    { value: "12%", label: "Orta İllik Gəlir" },
+    { value: "15,000+", label: t("stat_active_plans") },
+    { value: "45M+ ₼", label: t("stat_total_investment") },
+    { value: "98%", label: t("stat_satisfaction") },
+    { value: "12%", label: t("stat_avg_return") },
+  ];
+
+  const benefits = [
+    t("benefit_1"),
+    t("benefit_2"),
+    t("benefit_3"),
+    t("benefit_4"),
+    t("benefit_5"),
+    t("benefit_6"),
   ];
 
   return (
@@ -89,7 +70,6 @@ export default function LandingPage() {
 
       {/* =================== HERO SECTION =================== */}
       <section className="relative pt-24 pb-20 overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[#7F4CFF]/5 blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[#3EC6FF]/5 blur-3xl" />
@@ -97,58 +77,47 @@ export default function LandingPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
             <div className="mb-6">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#7F4CFF]/10 border border-[#7F4CFF]/20 text-sm font-medium text-[#7F4CFF]">
                 <Sparkles className="w-4 h-4" />
-                AI-dəstəkli investisiya platforması
+                {t("hero_badge")}
               </span>
             </div>
 
-            {/* Main Title */}
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-tight">
-              <span className="text-[#7F4CFF]">
-                Uşağının gələcəyini
-              </span>
+              <span className="text-[#7F4CFF]">{t("hero_title_1")}</span>
               <br />
-              <span className="text-[#0f172a]">bu gündən qur.</span>
+              <span className="text-[#0f172a]">{t("hero_title_2")}</span>
             </h1>
 
-            {/* Subtitle */}
             <p className="mt-6 text-lg sm:text-xl text-[#64748b] max-w-2xl mx-auto leading-relaxed">
-              İnvestisiya + Həyat Sığortası + AI dəstəyi ilə uşağınızın 18
-              yaşına qədər maliyyə gələcəyini təmin edin. Hər ay kiçik
-              məbləğlər, böyük nəticələr.
+              {t("hero_subtitle")}
             </p>
 
-            {/* CTA Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/plan"
                 className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#7F4CFF] text-white font-semibold text-lg shadow-lg shadow-[#7F4CFF]/20 hover:bg-[#6A35E0] hover:-translate-y-0.5 transition-all"
               >
-                Plan yarat
+                {t("hero_cta")}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="#features"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-[#e2e8f0] text-[#64748b] font-semibold text-lg hover:border-[#7F4CFF]/30 hover:text-[#7F4CFF] transition-all"
               >
-                Daha ətraflı
+                {t("hero_cta_secondary")}
                 <ChevronRight className="w-5 h-5" />
               </Link>
             </div>
 
-            {/* Quick Stats */}
             <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
                   <div className="text-2xl sm:text-3xl font-bold text-[#7F4CFF]">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-[#64748b] mt-1">
-                    {stat.label}
-                  </div>
+                  <div className="text-sm text-[#64748b] mt-1">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -161,11 +130,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a]">
-              Niyə <span className="text-[#7F4CFF]">Child Plan</span>?
+              {t("features_title_1")}{" "}
+              <span className="text-[#7F4CFF]">{t("features_title_2")}</span>?
             </h2>
             <p className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto">
-              Bir platformada investisiya, sığorta və süni intellekt dəstəyi
-              ilə uşağınız üçün ən yaxşı planı qurun.
+              {t("features_subtitle")}
             </p>
           </div>
 
@@ -179,17 +148,12 @@ export default function LandingPage() {
                   className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
                   style={{ backgroundColor: `${feature.color}15` }}
                 >
-                  <feature.icon
-                    className="w-7 h-7"
-                    style={{ color: feature.color }}
-                  />
+                  <feature.icon className="w-7 h-7" style={{ color: feature.color }} />
                 </div>
                 <h3 className="text-xl font-semibold text-[#0f172a] mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-[#64748b] leading-relaxed">
-                  {feature.description}
-                </p>
+                <p className="text-[#64748b] leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -201,17 +165,16 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a]">
-              Necə işləyir?
+              {t("how_title")}
             </h2>
             <p className="mt-4 text-lg text-[#64748b] max-w-2xl mx-auto">
-              4 sadə addımda uşağınızın maliyyə gələcəyini planlaşdırın
+              {t("how_subtitle")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
               <div key={step.number} className="relative text-center">
-                {/* Connector line */}
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-[#7F4CFF]/15" />
                 )}
@@ -234,26 +197,16 @@ export default function LandingPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left: Benefits list */}
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-[#0f172a] mb-8">
-                Uşağınız üçün{" "}
-                <span className="text-[#7F4CFF]">ən yaxşı investisiya</span>
+                {t("benefits_title_1")}{" "}
+                <span className="text-[#7F4CFF]">{t("benefits_title_2")}</span>
               </h2>
               <div className="space-y-5">
-                {[
-                  "Gündəlik 1 ₼-dən başlayan aylıq investisiya planları",
-                  "ABŞ və Avropa bazarlarına birbaşa çıxış",
-                  "Həyat sığortası ilə tam qorunma",
-                  "AI dəstəkli maliyyə məsləhətçisi",
-                  "Təhsil xərcləri proqnozu və planlaşdırma",
-                  "18 yaş sonrası davamlılıq planları",
-                ].map((benefit) => (
+                {benefits.map((benefit) => (
                   <div key={benefit} className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-[#10b981] flex-shrink-0 mt-0.5" />
-                    <span className="text-[#334155] leading-relaxed">
-                      {benefit}
-                    </span>
+                    <span className="text-[#334155] leading-relaxed">{benefit}</span>
                   </div>
                 ))}
               </div>
@@ -261,24 +214,18 @@ export default function LandingPage() {
                 href="/plan"
                 className="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-[#7F4CFF] text-white font-semibold hover:bg-[#6A35E0] transition-colors"
               >
-                İndi başla
+                {t("benefits_cta")}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            {/* Right: Visual card */}
             <div className="relative">
               <div className="relative bg-[#7F4CFF]/5 rounded-3xl p-8 border border-[#7F4CFF]/10">
-                {/* Mock investment card */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg mb-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm text-[#64748b]">
-                        Proqnozlaşdırılan dəyər
-                      </p>
-                      <p className="text-3xl font-bold text-[#7F4CFF]">
-                        127,450 ₼
-                      </p>
+                      <p className="text-sm text-[#64748b]">{t("card_projected_value")}</p>
+                      <p className="text-3xl font-bold text-[#7F4CFF]">127,450 ₼</p>
                     </div>
                     <div className="w-12 h-12 rounded-xl bg-[#10b981]/10 flex items-center justify-center">
                       <TrendingUp className="w-6 h-6 text-[#10b981]" />
@@ -286,35 +233,27 @@ export default function LandingPage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-[#10b981]">
                     <BarChart3 className="w-4 h-4" />
-                    +234% gəlir (18 il)
+                    {t("card_return")}
                   </div>
                 </div>
 
-                {/* Mock insurance card */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-[#7F4CFF]/10 flex items-center justify-center">
                       <Heart className="w-6 h-6 text-[#7F4CFF]" />
                     </div>
                     <div>
-                      <p className="text-sm text-[#64748b]">
-                        Həyat Sığortası
-                      </p>
-                      <p className="text-xl font-bold text-[#0f172a]">
-                        152,940 ₼
-                      </p>
-                      <p className="text-xs text-[#10b981]">
-                        Tam qorunma aktiv
-                      </p>
+                      <p className="text-sm text-[#64748b]">{t("card_insurance_label")}</p>
+                      <p className="text-xl font-bold text-[#0f172a]">152,940 ₼</p>
+                      <p className="text-xs text-[#10b981]">{t("card_insurance_active")}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating elements */}
                 <div className="absolute -top-4 -right-4 bg-white rounded-xl px-4 py-2 shadow-lg border border-[#e2e8f0]">
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-[#f59e0b]" />
-                    <span className="text-sm font-medium">4.9/5 Reytinq</span>
+                    <span className="text-sm font-medium">{t("card_rating")}</span>
                   </div>
                 </div>
               </div>
@@ -329,17 +268,16 @@ export default function LandingPage() {
           <div className="relative overflow-hidden rounded-3xl bg-[#7F4CFF] p-12 sm:p-16 text-center">
             <div className="relative">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                Gələcəyə investisiya bu gün başlayır
+                {t("cta_title")}
               </h2>
               <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-                Hər keçən gün uşağınızın gələcəyi üçün bir fürsətdir. İndi
-                plan yaradın və sabit maliyyə gələcəyini təmin edin.
+                {t("cta_subtitle")}
               </p>
               <Link
                 href="/plan"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-[#7F4CFF] font-semibold text-lg hover:bg-white/90 transition-colors shadow-xl"
               >
-                Plan yarat
+                {t("hero_cta")}
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

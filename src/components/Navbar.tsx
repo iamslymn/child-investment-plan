@@ -2,19 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Sparkles } from "lucide-react";
+import { Shield, Sparkles, Globe } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
-/**
- * Top navigation bar component.
- * Shows brand name and navigation links with active state styling.
- */
 export default function Navbar() {
   const pathname = usePathname();
+  const { lang, setLang, t } = useLanguage();
 
   const links = [
-    { href: "/", label: "Ana Səhifə" },
-    { href: "/plan", label: "Plan Yarat" },
-    { href: "/dashboard", label: "İdarə Paneli" },
+    { href: "/", label: t("nav_home") },
+    { href: "/plan", label: t("nav_plan") },
+    { href: "/dashboard", label: t("nav_dashboard") },
   ];
 
   return (
@@ -48,12 +46,25 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* AI Badge */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#7F4CFF]/8 border border-[#7F4CFF]/20">
-            <Sparkles className="w-4 h-4 text-[#7F4CFF]" />
-            <span className="text-xs font-medium text-[#7F4CFF]">
-              AI Dəstəkli
-            </span>
+          {/* Right side: Language switcher + AI badge */}
+          <div className="flex items-center gap-2">
+            {/* Language Switcher */}
+            <button
+              onClick={() => setLang(lang === "az" ? "en" : "az")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#e2e8f0] hover:border-[#7F4CFF]/30 text-xs font-medium text-[#64748b] hover:text-[#7F4CFF] transition-colors"
+              title={lang === "az" ? "Switch to English" : "Azərbaycanca keç"}
+            >
+              <Globe className="w-3.5 h-3.5" />
+              {lang === "az" ? "EN" : "AZ"}
+            </button>
+
+            {/* AI Badge */}
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#7F4CFF]/8 border border-[#7F4CFF]/20">
+              <Sparkles className="w-4 h-4 text-[#7F4CFF]" />
+              <span className="text-xs font-medium text-[#7F4CFF]">
+                {t("nav_ai_badge")}
+              </span>
+            </div>
           </div>
         </div>
       </div>

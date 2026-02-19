@@ -17,6 +17,7 @@ import {
   SAFE_SAVINGS_ANNUAL_RATE,
   UniversityCost,
 } from "./types";
+import { Lang } from "./i18n";
 
 /** Average annual inflation rate used in calculations */
 const INFLATION_RATE = 0.05;
@@ -272,44 +273,57 @@ export function calculateRecommendedIncrease(
 /**
  * Generate AI insights based on the plan data.
  */
-export function generateAIInsights(plan: PlanData): string[] {
+export function generateAIInsights(plan: PlanData, lang: Lang = "az"): string[] {
   const finalValue = calculateFinalValue(plan);
   const totalInvested = calculateTotalInvested(plan);
   const profit = finalValue - totalInvested;
   const educationCosts = predictEducationCosts(plan.planDuration);
 
   const insights: string[] = [];
+  const isEn = lang === "en";
 
   if (plan.planType === "safe") {
     const safe = calculateSafeFinalValues(plan);
     insights.push(
-      `Təhlükəsiz plan seçmisiniz. ${plan.planDuration} il ərzində yığım hissəsi ${safe.savingsValue.toLocaleString()} ₼, investisiya hissəsi ${safe.investmentValue.toLocaleString()} ₼ olmaqla ümumi ${safe.total.toLocaleString()} ₼ proqnozlaşdırılır.`
+      isEn
+        ? `You've selected the Safe plan. Over ${plan.planDuration} years, the savings portion will be ${safe.savingsValue.toLocaleString()} ₼, investment portion ${safe.investmentValue.toLocaleString()} ₼, for a total projection of ${safe.total.toLocaleString()} ₼.`
+        : `Təhlükəsiz plan seçmisiniz. ${plan.planDuration} il ərzində yığım hissəsi ${safe.savingsValue.toLocaleString()} ₼, investisiya hissəsi ${safe.investmentValue.toLocaleString()} ₼ olmaqla ümumi ${safe.total.toLocaleString()} ₼ proqnozlaşdırılır.`
     );
   } else {
     insights.push(
-      `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} ₼ investisiya ilə təxminən ${finalValue.toLocaleString()} ₼ gəlir gətirəcək. Bu, ${profit.toLocaleString()} ₼ xalis mənfəət deməkdir.`
+      isEn
+        ? `Your plan will generate approximately ${finalValue.toLocaleString()} ₼ over ${plan.planDuration} years with ${totalInvested.toLocaleString()} ₼ total investment. That's ${profit.toLocaleString()} ₼ net profit.`
+        : `Planınız ${plan.planDuration} il ərzində ${totalInvested.toLocaleString()} ₼ investisiya ilə təxminən ${finalValue.toLocaleString()} ₼ gəlir gətirəcək. Bu, ${profit.toLocaleString()} ₼ xalis mənfəət deməkdir.`
     );
   }
 
   const azCost = educationCosts[0].projectedCost;
   if (finalValue >= azCost) {
     insights.push(
-      `Proqnozlaşdırılan məbləğ Azərbaycanda universitetin tam xərclərini (${azCost.toLocaleString()} ₼) ödəmək üçün kifayət edəcək.`
+      isEn
+        ? `The projected amount will be sufficient to cover full university costs in Azerbaijan (${azCost.toLocaleString()} ₼).`
+        : `Proqnozlaşdırılan məbləğ Azərbaycanda universitetin tam xərclərini (${azCost.toLocaleString()} ₼) ödəmək üçün kifayət edəcək.`
     );
   } else {
     const gap = azCost - finalValue;
     insights.push(
-      `Azərbaycanda universitetin tam xərci ${azCost.toLocaleString()} ₼ olacaq. Planınız ilə ${gap.toLocaleString()} ₼ fərq var. Aylıq investisiyanı artırmağı tövsiyə edirik.`
+      isEn
+        ? `Full university cost in Azerbaijan will be ${azCost.toLocaleString()} ₼. There's a ${gap.toLocaleString()} ₼ gap with your plan. We recommend increasing your monthly investment.`
+        : `Azərbaycanda universitetin tam xərci ${azCost.toLocaleString()} ₼ olacaq. Planınız ilə ${gap.toLocaleString()} ₼ fərq var. Aylıq investisiyanı artırmağı tövsiyə edirik.`
     );
   }
 
   if (plan.riskLevel === "high") {
     insights.push(
-      "Yüksək risk profili seçmisiniz. Uzunmüddətli investisiyalarda yüksək risk daha çox gəlir potensialı verir, amma qısamüddətli dalğalanmalar ola bilər."
+      isEn
+        ? "You've selected a high-risk profile. Long-term high-risk investments offer greater return potential, but short-term fluctuations may occur."
+        : "Yüksək risk profili seçmisiniz. Uzunmüddətli investisiyalarda yüksək risk daha çox gəlir potensialı verir, amma qısamüddətli dalğalanmalar ola bilər."
     );
   } else if (plan.riskLevel === "low") {
     insights.push(
-      "Aşağı risk profili ilə investisiyanız daha stabil olacaq. Gəlir potensialını artırmaq üçün orta risk profilinə keçməyi düşünə bilərsiniz."
+      isEn
+        ? "With a low-risk profile, your investment will be more stable. Consider switching to medium risk to increase return potential."
+        : "Aşağı risk profili ilə investisiyanız daha stabil olacaq. Gəlir potensialını artırmaq üçün orta risk profilinə keçməyi düşünə bilərsiniz."
     );
   }
 
@@ -318,7 +332,9 @@ export function generateAIInsights(plan: PlanData): string[] {
     const increase = calculateRecommendedIncrease(plan, europeCost);
     if (increase > 0) {
       insights.push(
-        `Avropada təhsil planı üçün aylıq investisiyanızı ${increase} ₼ artırmağınız tövsiyə olunur.`
+        isEn
+          ? `For a European education plan, we recommend increasing your monthly investment by ${increase} ₼.`
+          : `Avropada təhsil planı üçün aylıq investisiyanızı ${increase} ₼ artırmağınız tövsiyə olunur.`
       );
     }
   }
@@ -329,24 +345,30 @@ export function generateAIInsights(plan: PlanData): string[] {
 /**
  * Generate post-18 suggestions for the plan.
  */
-export function generatePost18Suggestions(plan: PlanData) {
+export function generatePost18Suggestions(plan: PlanData, lang: Lang = "az") {
   const finalValue = calculateFinalValue(plan);
+  const isEn = lang === "en";
 
   return [
     {
-      title: "Xaricdə təhsil planı",
-      description: `${finalValue.toLocaleString()} ₼ ilə Avropa və ya ABŞ-da bakalavr təhsili üçün büdcə planlaşdırın.`,
+      title: isEn ? "Study abroad plan" : "Xaricdə təhsil planı",
+      description: isEn
+        ? `Plan a budget for a bachelor's degree in Europe or the US with ${finalValue.toLocaleString()} ₼.`
+        : `${finalValue.toLocaleString()} ₼ ilə Avropa və ya ABŞ-da bakalavr təhsili üçün büdcə planlaşdırın.`,
       icon: "🎓",
     },
     {
-      title: "Davamlı investisiya planı",
-      description:
-        "Toplanmış məbləği çıxarmadan investisiyaya davam edin. 25 yaşına qədər məbləğ 2x arta bilər.",
+      title: isEn ? "Continued investment plan" : "Davamlı investisiya planı",
+      description: isEn
+        ? "Continue investing without withdrawing. The amount could double by age 25."
+        : "Toplanmış məbləği çıxarmadan investisiyaya davam edin. 25 yaşına qədər məbləğ 2x arta bilər.",
       icon: "📈",
     },
     {
-      title: "Start-up kapital planı",
-      description: `${finalValue.toLocaleString()} ₼ start-up kapitalı kimi istifadə edilə bilər. Texnologiya sektorunda yeni şirkət qurmaq üçün yetərlidir.`,
+      title: isEn ? "Start-up capital plan" : "Start-up kapital planı",
+      description: isEn
+        ? `${finalValue.toLocaleString()} ₼ can be used as start-up capital. It's sufficient to start a new company in the tech sector.`
+        : `${finalValue.toLocaleString()} ₼ start-up kapitalı kimi istifadə edilə bilər. Texnologiya sektorunda yeni şirkət qurmaq üçün yetərlidir.`,
       icon: "🚀",
     },
   ];
